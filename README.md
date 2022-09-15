@@ -19,10 +19,8 @@ RxJS (*Reactive extensions for JavaScript*) is a library for composing asynchron
 
 ---
 
-To run files on folder 01... run:
+To run files on folder 01 within your terminal run ``ts-node index.ts``
 
-```
-npm i
+to run in your browser run ``npm start`` and a new tab will open on ``http://localhost:8080/``
 
-ts-node index.ts
-```
+*Just remember to open the inspector with* ``F12``
