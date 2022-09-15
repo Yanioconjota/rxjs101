@@ -24,3 +24,8 @@ To run files on folder 01 within your terminal run ``ts-node index.ts``
 to run in your browser run ``npm start`` and a new tab will open on ``http://localhost:8080/``
 
 *Just remember to open the inspector with* ``F12``
+
+---
+
+## Glossary
+...
