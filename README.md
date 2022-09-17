@@ -26,6 +26,17 @@ to run in your browser run ``npm start`` and a new tab will open on ``http://loc
 *Just remember to open the inspector with* ``F12``
 
 ---
+## Stream vs Array
+
+In an array all its content its available inmediately:
+
+```
+[1,32,78] [{x: 75, y: 22}, {x: 48, y: 07}] ['notebook', 'pencil']
+```
+A stream in the other hand, provides data in a timeline in which we can react or not, is pretty much like going into a grocery store and get into a coconut, we can put it into our shopping cart if it's on our list or not, then we find a box of cereal, we can add it or not, then another product may appear and we react or not, 
+this is a reactive programming approach. So in this case we use an observable to react to those changes and make it work.
+
+---
 
 ## Glossary
 ...
