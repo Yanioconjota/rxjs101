@@ -4,7 +4,7 @@ export const observable$ = new Observable<string>(subscriber => {
   console.log('Observable executed');
   subscriber.next('1st value');
   subscriber.next('2nd value');
-  setTimeout(() => subscriber.next('3rd value'), 4000);
+  setTimeout(() => subscriber.next('3rd value'), 2000);
   setTimeout(() => subscriber.error(new Error('Failure')), 4000);
 
   //indicates observable teardown phase
@@ -15,7 +15,7 @@ export const observable$ = new Observable<string>(subscriber => {
 console.log('Before subscribe');
 observable$.subscribe({
   next: value => console.log(value, 'received'),
-  error: (err) => console.log(err.message)
-
+  error: (err) => console.log(err.message),
+  complete: () => console.log('Success!')
 });
 console.log('After subscribe');
