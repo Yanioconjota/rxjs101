@@ -17,6 +17,8 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: "src/index.html",
+      favicon: "src/favicon.ico",
+      patterns: [{ from: "src/favicon.ico" }],
     }),
   ],
   resolve: {
