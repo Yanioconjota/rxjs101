@@ -1,4 +1,5 @@
 import { Observable } from "rxjs";
+import { clearInterval } from "timers";
 
 const interval$ = new Observable<number>(subscriber => {
   let counter = 0;
@@ -17,4 +18,4 @@ const subscriber = interval$.subscribe(value => { console.log(value, 'received')
 setTimeout(() => {
   console.log('unsubscribed');
   subscriber.unsubscribe();
-}, 5000);
+}, 7000);
