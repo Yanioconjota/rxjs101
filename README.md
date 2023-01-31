@@ -1,10 +1,3 @@
-# Observer Pattern
-The observer pattern is a design pattern in which an object, called the subject, maintains a list of its dependents (observers) and notifies them automatically of any changes to its state. In JavaScript, this can be implemented using events or by using an observer library such as RxJS. The observer pattern is useful for decoupling components, making it easier to add or remove functionality without affecting other parts of the system.
-
-Okay! Imagine you have a toy box and a toy truck. Whenever you put a toy in the toy box, the toy truck is watching. When you put a toy in the box, the truck says, "Hey! I see you put a toy in the box!" This is like the observer pattern in programming.
-
-In programming, an observer is like the toy truck. It watches for changes in the toy box (called the "subject") and then does something when changes happen. Just like the truck says, "Hey! I see you put a toy in the box!" when you add a toy, the observer in programming might do something like sending a message or updating a webpage.
-
 # RxJS 101
 
 RxJS (*Reactive extensions for JavaScript*) is a library for composing asynchronous and event-based programs by using [observable](https://rxjs.dev/guide/observable) sequences. It provides one core type, the Observable, satellite types (Observer, Schedulers, Subjects) and operators inspired by Array methods (map, filter, reduce, every, etc) to allow handling asynchronous events as collections.
@@ -41,12 +34,559 @@ In an array all its content its available inmediately:
 A stream in the other hand, provides data in a timeline in which we can react or not, is pretty much like going into a grocery store and get into a coconut, we can put it into our shopping cart if it's on our list or not, then we find a box of cereal, we can add it or not, then another product may appear and we react or not, 
 this is a reactive programming approach. So in this case we use an observable to react to those changes and make it work.
 
-
-
 ---
 
-## Glossary
-**Observable**: An Observable is basically a function that can return a stream of values to an observer over time, this can either be synchronously or asynchronously. The data values returned can go from zero to an infinite range of values
+## Introduction to Observables (RxJS) 
+
+Observables provide a unified way to work with different kinds of data. That is, observables can emit a single value or a sequence of values, synchronously or asynchronously, lazily (cold) or eagerly (hot), unicast to a single consumer (cold), or multicast to multiple consumers (hot).
+
+### What Is an Observable?
+
+> *“An observable represents a sequence of values which can be observed.” —[TC39](https://github.com/tc39/proposal-observable)*
+
+Unlike promises and [iteration protocols](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols), observables are not part of JavaScript yet. However, there is a [TC39 proposal](https://tc39.es/proposal-observable/#observable-constructor) to add an observable type to JavaScript.
+
+Let us find out what an observable is and what it does by studying the TC39 proposal.
+
+### An Observable Is a Type
+
+The TC39 proposal introduces the observable type as follows:
+
+- The observable type can be used to model push-based data sources such as DOM events, timer intervals and sockets.
+- The Observable constructor initializes a new observable object.
+
+```
+const myObservable$ = new Observable(subscriber);
+
+function subscriber(observer) {
+  // define the observable body
+  
+  return () => {
+	// teardown logic
+  };
+}
+
+```
+- The subscriber argument must be a function object. It is called each time the subscribe() method of the observable object is invoked.
+
+To create an observable instance, we implement the observable in a function and pass the function to the observable constructor. The TC39 proposal refers to this function as the **subscriber function**. The subscriber function will get invoked when each time we subscribe to the observable instance.
+
+### What Does an Observable Do?
+
+We know that we define an observable in a subscriber function, but what should the function do? What should be the input and what should it return?
+
+The TC39 proposal mentions that the observable type can be used to model push-based data sources.
+
+### An Observable Produces Data and Sends it to the Observer
+
+There's an article “[Comparing Data Producers in JavaScript](https://www.telerik.com/blogs/angular-basics-comparing-data-producers-javascript-functions-promises-iterables-observables)” that talks about data producers and push vs. pull data systems.
+
+As explained in the accompanying article, our application includes code that produces data (producers) and code that consumes data (consumers).
+
+Functions, promises, iterables and observables are the data producers in JavaScript. This is why the TC39 proposal said that the observable type can be used to model a data source. “Push-based” means that observables are in control of when they send data to their observers.
+
+The producers differ in how they communicate data with their consumers. That is, they might have a push or pull system, produce a single value or a sequence of values, send data synchronously or asynchronously, lazily or eagerly.
+
+The key point is that an observable produces data and sends the data to its consumers. The data produced by an observable is consumed by its observers (or subscribers).
+
+Since we define what an observable instance does in its subscriber function, the subscriber function takes an observer as input, produces data, sends the data to the observer, and notifies the observer if an error happened or if it has completed sending data.
+
+### An Observable Allows Observers to Subscribe
+
+Creating an observable instance is not enough to start producing and sending data—we also need to subscribe to the observable.
+
+The observable needs to know who to send data to. We let an observable know that an observer is interested in receiving data by subscribing to it.
+
+The observable type has a subscribe() method that accepts an observer as a parameter.
+
+```
+const subscription = myObservable$.subscribe(observer);
+
+```
+
+The subscribe() method begins sending values to the supplied observer object by executing the observable object’s subscriber function.
+
+The subscribe() method executes the subscriber function, passing along the observer as an argument. The subscriber function then starts producing data and emitting values (or notifications) by executing the observer’s callbacks.
+
+### An Observable Allows its Observers to Unsubscribe
+
+The subscribe() method returns a subscription object which may be used to cancel the subscription.
+
+```
+const subscription = myObservable$.subscribe(observer);
+
+```
+
+The subscription object has a method called unsubscribe() that lets the observer to unsubscribe (or cancel the subscription):
+
+```
+const subscription.unsubscribe();
+
+```
+
+Calling unsubscribe() clears the resources used by the subscription and calls the teardown function returned by the subscriber function.
+
+```
+function subscriber(observer) {
+  // Produce Data
+  // Send data and notifications
+  
+  return () => {
+    // teardown logic
+  };
+}
+
+```
+
+### What Is an Observer?
+
+An observer is the consumer of the data produced by the observable. It is represented by an object with next, error and complete properties. These properties contain callback functions for processing data, handling errors and completion notifications.
+
+The subscriber function emits data to the observer by calling the next() callback function. Likewise, it can send an error notification by calling the error() callback and a completion notification by calling the complete() callback.
+
+```
+function subscriber(observer) {
+  observer.next('Hello there!');
+  observer.complete();
+}
+
+```
+
+### What Is RxJS?
+As we mentioned earlier, the observable type is not part of JavaScript yet. However, we can use libraries that implement the observable type.
+
+Implementations of the observable include:
+
+- RxJS with 24,122,537 npm weekly downloads (at the time of writing)
+- zen-observable with 3,352,707 weekly downloads
+- fate-observable built as a learning project
+
+We can see from the weekly npm downloads that RxJS is extremely popular. 🔥
+
+RxJS stands for Reactive Extensions for JavaScript. According to the documentation:
+
+> RxJS is a library for composing asynchronous and event-based programs by using observable sequences.
+
+The RxJS library implements:
+
+- The observable type.
+- The related types—observer, scheduler and subject.
+- A set of observable creation functions. Observable creation functions make it easy to create observables from common data sources—for example, interval(), fromEvent() and range()—as well as combine observables—for example, concat(), race() and zip().
+- A set of operators. Operators let us operate on each item in the observable data sequence. RxJS operators cover a lot of operations that we might want to perform on our data. These include operations to transform data, filter data, perform mathematical calculations and more. map(), filter() and reduce() are examples of operators provided by RxJS that we’re already familiar with from arrays in JavaScript.
+
+In this article we will focus on the observable and observer types.
+
+Let us have a closer look at the observable type in RxJS next. 🔎
+
+### The Observable Class in RxJS
+RxJS implements observable as a class with a constructor, properties and methods.
+
+The most important methods in the observable class are subscribe and pipe:
+
+- **subscribe()** lets us subscribe to an observable instance.
+- **pipe()** lets us apply a chain of operators to the observable before subscribing to it. (If interested, you can read A simple explanation of functional pipe in JavaScript by Ben Lesh to learn how the pipe function enables tree-shaking, which is not possible with prototype augmentation.)
+The observable class also has the following method:
+
+- **forEach()**—a non-cancellable means of subscribing to an observable, for use with APIs that expect promises.
+
+Additionally, the observable class has various protected properties for the RxJS library’s internal use, meaning we should not use these properties directly in our application code.
+
+### Creating an Observable in RxJS
+As expected, we use the observable constructor to create an instance of observable:
+
+```
+import { Observable } from 'rxjs';
+
+const myObservable$ = new Observable(subscriber);
+
+function subscriber(observer) {  
+  // Produce data
+  // Emit data
+  // Notify if error
+  // Notify if/when complete
+
+  return () => {
+    // teardown logic
+  };
+}
+
+```
+Creating an observable in RxJS is pretty much the same as what we saw in the TC39 proposal, except we need to import the observable class from the RxJS library to use it.
+
+It is customary to add the $ sign at the end of the variable name containing an observable. This is a helpful convention started by Andre Stalz that makes it easy to see at a glance we are working with an observable.
+
+If we inspect the above observable instance, we see it has the subscribe() and pipe() methods, together with forEach() and the private properties.
+
+The following methods in the list have been deprecated and will be removed in RxJS v8:
+
+- **toPromise()**—returns a promise that resolves to the last value emitted by the observable when it completes. It has been replaced with **firstValueFrom** and **lastValueFrom** and will be removed in v8. Please refer to https://rxjs.dev/deprecations/to-promise and this inDepthDev article—RxJS heads up: toPromise is being deprecated—for more details.
+- **lift()**—creates a new observable, with this observable instance as the source, and the passed operator defined as the new observable’s operator. However, this is an implementation detail and we should not use it directly in our application code. It will be made internal in v8.
+
+### The Subscribe Function
+The [observable constructor](https://github.com/ReactiveX/rxjs/blob/6fa819beb91ba99dadd6262d6c13f7ddfd9470c5/src/internal/Observable.ts#L33) expects a function as its parameter. The RxJS library names the argument subscribe. Therefore, we could refer to the function passed into the constructor as the *“subscribe function.”*
+
+```
+constructor(subscribe?: (this: Observable<T>, subscriber: Subscriber<T>) => TeardownLogic) {  
+    if (subscribe) {  
+      this._subscribe = subscribe;  
+    }  
+  }
+
+```
+As we see, the subscribe function takes a subscriber as a parameter and returns a function containing the teardown logic. The constructor stores the subscribe function in an internal class property called _subscribe.
+
+The TC39 proposal names the subscribe function similarly—subscriber.
+
+The subscribe/subscriber function is very important for two reasons:
+
+1. It defines what the observable instance would do—that is, it defines how to produce data, and send data and notifications to the subscriber (observer).
+2. It is the function that is executed when we subscribe to the observable instance
+
+### The Observable Function
+
+To avoid confusing the “subscribe function” with the observable class’ subscribe() method, in the rest of this article we will refer to the function we pass to the observable constructor as the “**observable function**.”
+
+Calling it observable function highlights that this function contains the body of the observable. Whereas calling it the subscribe function highlights that this function is invoked when we subscribe to the observable.
+
+How is the observable function different from other functions?
+
+A function usually takes an input, acts on the input and returns a single value.
+
+An observable function is a higher order function that:
+
+- Takes a subscriber object as input (the subscriber object contains the callback functions)
+- Produces data
+- Sends a sequence of values, error notification or completion notification to the subscriber by calling its corresponding callback functions
+- Optionally returns a teardown function.
+
+Now that we’ve seen that “subscribe function,” “**subscriber function**” and “**observable function**” are all names we may call the function we pass to the observable constructor and talked about what it does, let us talk about how subscribers relate to observers.
+
+### Sequence of Values
+
+We said that an observable can emit zero to multiple values. But how does an observable emit multiple values?
+
+The observable function can call the next() callback multiple times, thus it can emit a sequence of values. Since the observable can emit a sequence of values over time, it is also referred to as a data stream.
+
+The number of values in the sequence depends on the observable instance. An observable may do any of these:
+
+- Produce a single value and then complete
+- Produce multiple values before it completes
+- Continue producing values until we tell it to - Stop by unsubscribing
+- Not produce any values at all
+
+### Synchronous or Asynchronous
+Do observables call the observer callbacks synchronously or asynchronously?
+
+In order to answer this question, we need an understanding of what it means to call a function asynchronously.
+
+Please read the accompanying article “Angular Basics: Introduction to Processes and Threads for Web UI Developers” to learn more about processes and threads and asynchronous programming.
+
+Following is a quick explanation for convenience.
+
+### Main Thread of the Renderer Process
+Modern browsers have a multi-process architecture. Instead of running everything in one process, browsers create multiple processes to take care of different parts of the browser.
+
+Browsers typically have a separate process for rendering web pages.
+
+The main thread of the renderer process is responsible for:
+
+- Rendering the web page
+- Running the application’s JavaScript (except workers)
+- Responding to user interactions
+
+Our application code includes JavaScript and Web APIs. We use Web APIs (also known as Browser APIs) to provide a variety of features to enhance our web application.
+
+> Browser APIs are built into your web browser and are able to expose data from the browser and surrounding computer environment and do useful complex things with it. —MDN
+
+Our application’s JavaScript (except workers) runs on the main thread of the Renderer process in the browser. Calls to Web APIs may run on another process in the browser. A web worker runs the script on a worker thread in the renderer process.
+
+### Worker Threads
+JavaScript code that takes too long to execute blocks the renderer process’s main thread. That is, while the main thread is waiting for the JavaScript code to return, it cannot update the rendering or respond to user interactions. This negatively impacts the user experience of our application.
+
+Not to worry though—we can offload computationally intensive functions in our applications to run on worker threads by using the Web Workers API. A worker thread executes the script and communicates the result to the application running on the main thread by posting a message. The application has an onmessage event to process the result.
+
+### Web APIs
+Besides keeping the main thread from blocking, we can use Web APIs to access privileged parts of a browser from our web applications.
+
+A browser’s renderer process is typically sandboxed for security. This means the web application code cannot directly access the user’s files or camera, make network requests or operating system calls, etc. Instead, we use Web APIs provided by the browsers to access privileged parts of a browser in our web applications.
+
+It is important to highlight that calls to these Web APIs are not executed on the renderer process, but on a process with more privilege such as the main browser process.
+
+For example, we can use the Fetch API or XMLHttpRequest to request data from the network. In Chrome, the network thread in the browser process is responsible for fetching data from the internet.
+
+### Callbacks, Task Queues and Event Loop
+The tasks performed on another thread (other than the renderer process’s main thread) are asynchronous tasks. The process/thread performing the asynchronous task communicates with the renderer process using Inter-Process Communication (IPC).
+
+We define callback functions to be executed once the asynchronous tasks are completed. For example:
+
+```
+setTimeout(() => console.log('This is the callback function passed to setTimeout'), 1000);
+
+```
+
+The callback processes any results returned by the asynchronous task. For example:
+
+```
+// navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+
+navigator.geolocation.getCurrentPosition(console.log, console.warn);
+
+```
+
+When an asynchronous task is completed, the thread performing the asynchronous task adds the callback to a **queue** on the main thread of the renderer process.
+
+The renderer process has queues (job queue, task queue, or message queue and a microtask queue) for asynchronous callbacks that are ready to run on the main thread. The renderer process also has an **event loop** that executes the queued callbacks when the JavaScript callstack is empty. The event loop executes the queued callback passing in any value returned by the asynchronous task as an argument.
+
+Back to the question: *Do observables call the observer callbacks synchronously or asynchronously?*
+
+**The answer is**: It actually depends on the observable instance. Observables can emit data synchronously or asynchronously—it depends on whether the observable function performs a synchronous task or asynchronous task to produce data.
+
+Just because observables use callbacks to send data and notifications does not mean that the callbacks are always executed asynchronously—that is, added to a task or microtask queue to be executed by the event loop.
+
+### Observables Can Emit Data and Notifications Asynchronously
+If the observable function performs an asynchronous task to produce data, then it emits the data asynchronously.
+
+For example, an observable may fetch resources from the network using the browser’s [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API):
+
+```
+pikachu$ = new Observable(observer => {  
+  fetch('https://pokeapi.co/api/v2/pokemon/pikachu')  
+    .then(response => response.json())  
+    .then(pikachu => {  
+      observer.next(pikachu);  
+      observer.complete();  
+    })  
+    .catch(err => observer.error(err))  
+});
+
+pikachu$.subscribe({
+  next: pikachu => console.log(pikachu),
+  error: err => console.error(err)
+});
+
+```
+Fetching data from the network is an asynchronous task that is carried out by a network thread. The fetch() method returns a promise object that lets us process the results of the asynchronous task.
+
+We pass a success callback to the promise object by calling its then() method. In the success callback, we emit the data returned from fetch by calling observer.next(pikachu) and also notify the observer that we have finished sending data by calling observer.complete().
+
+We also pass an error callback to the promise by calling the catch() method. In the error callback, we notify the observer of the error by calling observer.error(err) and passing in the error information.
+
+The promise object queues the success or error callback in the microtask queue so the event loop can execute it when the callstack is empty. Thus, the observer methods (next and complete, or error) are called asynchronously in this observable.
+
+### Observables Can Emit Data and Notifications Synchronously
+Observables can also emit data and notifications synchronously.
+
+```
+const colourPalette$ = new Observable(observer => {
+  const palette = [
+    'hsl(216,87%,48%)', 
+    'hsl(216,87%,48%)', 
+    'hsl(42,99%,52%)', 
+    'hsl(7,66%,49%)'
+  ];
+  for (let colour of palette) {
+    observer.next(colour);
+  }
+  observer.complete();
+}
+
+colourPalette$.subscribe(console.log);
+
+```
+
+The observable function above produces data synchronously. That is, it assigns an array of string values to the constant palette (which is the data source). It then calls observer.next(colour) for each color in the palette, then calls the observer.complete() callback, and finally returns.
+
+When we call next() in this observable instance, the JavaScript engine creates an execution context for the function and adds it to the callstack. No queues or event loop are involved.
+
+### Cold vs. Hot Observables
+The observable could get its data from any source really. It could get data from various Web APIs, such as DOM events, Websockets, Fetch or Geolocation. It could loop over an iterable, or even send hard-coded values like we often do in blog posts and tutorials. 😊
+
+The code responsible for producing data for an observable is the actual producer part of the observable. It is important to highlight that we could define the producer within the observable function body or reference a producer that has been defined outside the observable body.
+
+A cold observable contains the code to produce data, while a hot observable closes over it.
+
+Let us take a closer look at cold and hot observables next.
+
+### Cold Observables
+The characteristics of cold observables follow from data being produced as part of the observable function.
+
+- **Cold observables won’t produce data until we subscribe**. When we subscribe to an observable, it executes the observable function. Since the code for the producer is included within the observable function, it only runs when the observable function is called.
+- **Cold observables are unicast**. Each subscription executes the observable function and thus the code to produce data. For example, if the observable creates an instance of an object or a random value, each observer will get its own separate instance or unique value.
+The observables we have created so far in this article are cold observables. Let us have a go at creating a few more, this time keeping in mind that the code for producing data is a part of the observable function.
+
+**Example 1**: A cold observable using the Geolocation API to get the current location of the user’s device and emit the location to its observer.
+
+```
+import { Observable } from 'rxjs';
+
+const location$ = new Observable(observer => {  
+  let watchId;
+  const success = position => {  
+    observer.next(position);  
+  };
+  const error = err => {  
+    observer.error(err);  
+  };
+  const geolocation = `navigator.geolocation;`
+  if (!geolocation) {  
+    observer.error('Geolocation is not supported by your browser');  
+  } else { 
+    watchId = geolocation.watchPosition(success, error);  
+  }
+  return () => geolocation.clearWatch(watchId);
+});
+
+```
+**Data**: The current position of the user’s device.
+
+**Producer**: navigator.geolocation.watchPosition().
+
+**Code explanation**:
+The Geolocation API allows the user to provide their location to web applications if they so desire. For privacy reasons, the user is asked for permission to report location information.
+
+navigator.geolocation.watchPosition() takes a success callback, an optional error callback and options.
+
+When watchPosition() has successfully located the user’s device position, it will call the success callback and pass in the position. We emit the user’s position in the success callback. watchPosition() will execute the success callback each time it has an updated position. Therefore, the observable function will continue emitting the updated position.
+
+On the other hand, there could be an error, such as the Geolocation API doesn’t exist on the user’s browser or the user denied permission to report their location information. We notify the user of the error by calling observer.error(err).
+
+location$ is a cold observable since it defines its producer within the observable. It will only start producing and emitting values when we subscribe to it. Each observer will create a new watch. When an observer unsubscribes, it will only unregister its own success and error handlers.
+
+**Example 2**: A cold observable instance where the observable function creates a random number using the JavaScript built-in Math object.
+
+```
+import { Observable } from 'rxjs';
+
+const randomNumberCold$ = new Observable(observer => {  
+  const random = Math.random();  
+  observer.next(random);  
+  observer.complete();  
+});
+
+```
+
+**Data**: a random number.
+
+**Producer**: Math.random().
+
+Each observer gets a separate random value since each subscription executes Math.random():
+
+```
+randomNumberCold$.subscribe(console.log); // 0.8249378778010443
+randomNumberCold$.subscribe(console.log); // 0.36532653367650236
+
+```
+
+### Hot Observable
+Hot observables emit data that was produced outside the observable function body.
+
+The data is generated independently of whether an observer subscribes to the observable or not. The observable function simply accesses the data that is already produced (outside the function) and emits the data to observers.
+
+All the observers will get the same data. Thus, a hot observable is said to be multicast.
+
+For example, here’s the random number example rewritten as a hot observable.
+
+```
+const random = Math.random();
+console.log(random); // 0.05659653519968999 
+
+const randomNumberHot$ = new Observable(observer => {  
+  observer.next(random);  
+  observer.complete();  
+});
+
+```
+
+The random number is generated independently of our subscriptions to randomNumberHot$. You’ll notice that we haven’t subscribed to observable yet.
+
+Each observer randomNumberHot$ gets the same random number because Math.random() is only executed once.
+
+```
+randomNumberHot$.subscribe(console.log); // 0.05659653519968999
+randomNumberHot$.subscribe(console.log); // 0.05659653519968999
+
+```
+
+### Built-in Observable Creation Functions in RxJS
+So far in this article, we have created observables from scratch. That is, we used the new operator on the observable constructor and passed the observable function as an argument. We defined the body of the observable in the observable function.
+
+However, we have hard-coded values in the observable function. How can we make the observables customizable and reusable?
+
+You’re probably thinking, Hey, functions are customizable and reusable—we should use functions. Well, that’s a brilliant idea. 🦊 We can create functions that accept parameters, create a new observable based on these parameters, and return the observable instance.
+
+The good news is that RxJS provides observable creation functions for most tasks so we don’t need to write them ourselves.
+
+Let us look at some of the commonly used observable creation functions provided by RxJS:
+
+- **from()** expects an array, an array-like object, a promise, an iterable object or an observable-like object as its parameter. And it returns an observable that emits the items from the given input as a sequence of values.
+
+```
+from([5, 50, 100]).subscribe(console.log);
+// 5
+// 50
+// 100
+
+```
+
+- **of()** expects multiple parameters and creates an observable that emits each parameter as a value, then completes.
+
+
+```
+of([5, 50, 100], [10, 100, 200]).subscribe(console.log);
+// [5, 50, 100]
+// [10, 100, 200]
+
+```
+
+You may also be interested to learn about generate() and range().
+
+### Events
+- **fromEvent()** expects a target and event name as its parameters and returns an observable that emits the specified event type from the given target.
+
+```
+import { fromEvent } from 'rxjs';
+
+const drag$ = fromEvent(document, 'drag');
+drag$.subscribe(console.log);
+const drop$ = fromEvent(document, 'drop');
+drop$.subscribe(console.log);
+
+```
+
+You may also be interested to learn about [fromEventPattern()](https://rxjs.dev/api/index/function/fromEventPattern). Which creates an Observable from an arbitrary API for registering event handlers.
+
+### Timers
+- The interval() observable creation function returns an observable that emits the next number in the sequence at the specified interval.
+
+```
+import  { interval } from 'rxjs';
+
+const seconds$ = interval(1000);
+seconds$.subscribe(console.log);
+
+const minutes$ = interval(60000);
+minutes$.subscribe(console.log);
+
+```
+
+You may also be interested to learn about [timer()](https://rxjs.dev/api/index/function/timer).
+
+### Creating Observables Dynamically
+- **defer()** allows us to create an observable only when the observer subscribes.
+
+### Combining Observables
+- [**combineLatest()**](https://rxjs.dev/api/index/function/combineLatest) Combines multiple Observables to create an Observable whose values are calculated from the latest values of each of its input Observables.
+- [**concat()**](https://rxjs.dev/api/index/function/concat) Creates an output Observable which sequentially emits all values from the first given Observable and then moves on to the next.
+- [**forkJoin()**](https://rxjs.dev/api/index/function/forkJoin) Accepts an Array of ObservableInput or a dictionary Object of ObservableInput and returns an Observable that emits either an array of values in the exact same order as the passed array, or a dictionary of values in the same shape as the passed dictionary
+- [**merge()**](https://rxjs.dev/api/index/function/merge) Creates an output Observable which concurrently emits all values from every given input Observable.
+- [**race()**](https://rxjs.dev/api/index/function/race) Returns an observable that mirrors the first source observable to emit an item.
+- [**zip()**](https://rxjs.dev/api/index/function/zip) Combines multiple Observables to create an Observable whose values are calculated from the values, in order, of each of its input Observables.
+
+You may also be interested to learn about splitting an observable using the [partition()](https://rxjs.dev/api/index/function/partition) function. which Splits the source Observable into two, one with values that satisfy a predicate, and another with values that don't satisfy the predicate.
+
+Please refer to the RxJS docs for detailed explanations of the observable creation functions. If curious, you can also look at the implementation for a few of these functions.
+
+**Observable**: An Observable is basically a function that can return a stream of values to an observer over time, this can either be synchronously or asynchronously. The data values returned can go from zero to an infinite range of values.
 
 **Subscription**: A Subscription is an object that represents a disposable resource, usually the execution of an Observable. A Subscription has one important method, unsubscribe , that takes no argument and just disposes the resource held by the subscription. In previous versions of RxJS, Subscription was called "Disposable".
 
