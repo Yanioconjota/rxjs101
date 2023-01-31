@@ -844,5 +844,6 @@ We’ve seen that observables produce data—this is why observables are sometim
 I hope this two-part article helped provide a better understanding of the observable type, paving the path to learn further topics relating to observables and reactive programming with RxJS (operators, subjects and schedulers).
 
 #### Resources
-[Angular Basics: Introduction to Observables (RxJS)—Part 2](https://www.telerik.com/blogs/angular-basics-introduction-observables-rxjs-part-2#:~:text=The%20observer%27s%20next%20method%20defines,the%20data%20as%20an%20argument.)
+[Angular Basics: Introduction to Observables (RxJS)—Part 1](https://www.telerik.com/blogs/angular-basics-introduction-observables-rxjs-part-1)
+[Angular Basics: Introduction to Observables (RxJS)—Part 2](https://www.telerik.com/blogs/angular-basics-introduction-observables-rxjs-part-2)
 
