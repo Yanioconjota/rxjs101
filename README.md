@@ -1,6 +1,10 @@
 # Observer Pattern
 The observer pattern is a design pattern in which an object, called the subject, maintains a list of its dependents (observers) and notifies them automatically of any changes to its state. In JavaScript, this can be implemented using events or by using an observer library such as RxJS. The observer pattern is useful for decoupling components, making it easier to add or remove functionality without affecting other parts of the system.
 
+Okay! Imagine you have a toy box and a toy truck. Whenever you put a toy in the toy box, the toy truck is watching. When you put a toy in the box, the truck says, "Hey! I see you put a toy in the box!" This is like the observer pattern in programming.
+
+In programming, an observer is like the toy truck. It watches for changes in the toy box (called the "subject") and then does something when changes happen. Just like the truck says, "Hey! I see you put a toy in the box!" when you add a toy, the observer in programming might do something like sending a message or updating a webpage.
+
 # RxJS 101
 
 RxJS (*Reactive extensions for JavaScript*) is a library for composing asynchronous and event-based programs by using [observable](https://rxjs.dev/guide/observable) sequences. It provides one core type, the Observable, satellite types (Observer, Schedulers, Subjects) and operators inspired by Array methods (map, filter, reduce, every, etc) to allow handling asynchronous events as collections.
