@@ -8,22 +8,22 @@ RxJS (_Reactive extensions for JavaScript_) is a library for composing asynchron
 - 02-exercises: Examples using RxJs operators
   - 01 to 07 How does an Observable works
   - 08 to 09 Types of Observables
-    - Hot
-    - Cold
-  - 10 to 17 Creation Operators
-    - of
-    - from
-    - fromEvent
-    - timer
-    - interval
-    - forkJoin
-    - combineLatest
-  - 18 to 22 Pipeable Operators
-    - filter
-    - map
-    - tap
-    - debounceTime
-    - catchError
+    - Hot: An Observable is cold when data is produced inside the Observable and the Observable is hot when the data is produced outside the Observable. As we just saw the hot Observable is able to share data between multiple subscribers. We call this behaviour “multicasting”. Generating a random number is not a good real life usecase. A good usecase would be DOM events. Let’s say we’re tracking clicking behaviour and have multiple subscribers do something with the coordinates
+    - Cold: We call an Observable “cold” when the data is produced inside the Observable. Observables are lazy. Observables are lazy in the sense that they only execute values when something subscribes to it. For each subscriber the Observable starts a new execution, resulting in the fact that the data is not shared. If your Observable produces a lot of different values it can happen that two Observables that subscribe at more or less the same receive two different values. We call this behaviour “unicasting”.
+  - 10 to 17 Creation Operators: Creation operators in RxJS are used to create new Observables from various sources or based on specific patterns. They allow you to generate Observables that emit values over time, such as from arrays, events, timers, or custom logic.
+    - **of**: The of operator in RxJS is an operator that allows you to create an Observable that emits a sequence of explicitly specified values. You can provide a comma-separated list of values as arguments to the of operator, and it will generate an Observable that emits those values sequentially.
+    - **from**: Creates an Observable from an array, an array-like object, a Promise, an iterable, or an Observable-like object.
+    - **fromEvent**: Creates an Observable that emits events from a specified event source, such as DOM elements, Node.js event emitters, or other event-based APIs.
+    - timer: Creates an Observable that emits a single value after a specified delay or at regular intervals.
+    - **interval**: Creates an Observable that emits incrementing numbers at a specified interval.
+    - **forkJoin**: Is used to combine the latest values from multiple Observables into a single Observable, emitting an array of those values when all the source Observables complete.
+    - **combineLatest**: The combineLatest operator in RxJS is used to combine the latest values from multiple Observables into a single Observable, emitting an array of those values whenever any of the source Observables emit a new value.
+  - 18 to 22 Pipeable Operators: Pipeable operators, also known as lettable operators, are a way to compose operators in a more modular and flexible manner in RxJS. They are a recommended approach for using operators in recent versions of RxJS (version 5.5 and above). Pipeable operators allow you to chain operators together using the pipe function, providing a more readable and composable syntax. They provide better tree-shaking capabilities and make it easier to create custom operator pipelines.
+    - **filter**: The filter operator is used to create a new Observable that emits values from the source Observable that satisfy a specified condition.
+    - **map**: The map operator is used to transform values emitted by an Observable into new values using a projection function.
+    - **tap**: The tap operator in RxJS is used to perform side effects or actions for each value emitted by an Observable, without modifying the values themselves. It allows you to perform additional operations, such as logging, debugging, or triggering other actions, while still allowing the original values to pass through the Observable unchanged.
+    - **debounceTime**: The debounceTime operator in RxJS is used to control the timing of emitted values from an Observable by only allowing a value to pass through if there is a specified duration of silence between emissions. It delays the emission of values and emits only the most recent value after a certain duration of silence.
+    - **catchError**: The catchError operator in RxJS is used to handle errors emitted by an Observable and provide an alternative Observable or fallback value to continue the stream without propagating the error.
   - 23 to XX Flattening Operators
 
 #### _Think of RxJS as Lodash for events._
