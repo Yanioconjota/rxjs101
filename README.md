@@ -8,7 +8,23 @@ RxJS (_Reactive extensions for JavaScript_) is a library for composing asynchron
 - 02-exercises: Examples using RxJs operators
   - 01 to 07 How does an Observable works
   - 08 to 09 Types of Observables
-  - 10 to 16 Creation Operators
+    - Hot
+    - Cold
+  - 10 to 17 Creation Operators
+    - of
+    - from
+    - fromEvent
+    - timer
+    - interval
+    - forkJoin
+    - combineLatest
+  - 18 to 22 Pipeable Operators
+    - filter
+    - map
+    - tap
+    - debounceTime
+    - catchError
+  - 23 to XX Flattening Operators
 
 #### _Think of RxJS as Lodash for events._
 
