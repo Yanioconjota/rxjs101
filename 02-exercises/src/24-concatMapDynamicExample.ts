@@ -3,6 +3,13 @@ import { ajax } from "rxjs/ajax";
 
 /* 
 Flattening operators in RxJS are used to handle and merge higher-order Observables (Observables that emit other Observables) into a single Observable stream. They flatten the nested Observables, allowing you to work with the emitted values in a more convenient way.
+
+The concatMap operator applies a projection function to each value emitted by the source Observable. This projection function returns an inner Observable for each source value. The concatMap operator subscribes to these inner Observables sequentially, waiting for each inner Observable to complete before subscribing to the next one.
+
+As the inner Observables emit their values, the concatMap operator emits those values in the order they arrive, preserving the order of emissions from the source Observable.
+
+Use Case:
+The concatMap operator is useful when you need to maintain the order of emissions from the source Observable while performing operations that return asynchronous results, such as making HTTP requests or performing I/O operations. It ensures that the resulting Observable emits values in the same order as they were emitted by the source Observable
 */
 
 const endpointInput: HTMLInputElement =
