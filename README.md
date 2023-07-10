@@ -26,6 +26,7 @@ RxJS (_Reactive extensions for JavaScript_) is a library for composing asynchron
     - **catchError**: The catchError operator in RxJS is used to handle errors emitted by an Observable and provide an alternative Observable or fallback value to continue the stream without propagating the error.
   - **23 to XX** _Flattening Operators_: Flattening operators in RxJS are used to handle and merge higher-order Observables (Observables that emit other Observables) into a single Observable stream. They flatten the nested Observables, allowing you to work with the emitted values in a more convenient way.
     - **concatMap**: The concatMap operator in RxJS is a flattening operator that maps each value emitted by the source Observable to an inner Observable, subscribes to them sequentially, and emits their values in the order of their arrival. It ensures that the order of emissions from the inner Observables is maintained.
+    - **switchMap**: The switchMap operator in RxJS is a flattening operator that maps each value emitted by the source Observable to an inner Observable, subscribes to the most recent inner Observable, and emits its values. It cancels and unsubscribes from any previously subscribed inner Observables as soon as a new inner Observable is emitted.
 
 #### _Think of RxJS as Lodash for events._
 
