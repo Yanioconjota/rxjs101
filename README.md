@@ -29,6 +29,45 @@ RxJS (_Reactive extensions for JavaScript_) is a library for composing asynchron
     - **switchMap**: The switchMap operator in RxJS is a flattening operator that maps each value emitted by the source Observable to an inner Observable, subscribes to the most recent inner Observable, and emits its values. It cancels and unsubscribes from any previously subscribed inner Observables as soon as a new inner Observable is emitted.
     - **mergeMap**: The mergeMap operator in RxJS is a flattening operator that applies a projection function to each value emitted by the source Observable and maps it to an inner Observable. It then subscribes to all inner Observables concurrently and merges their emitted values into a single Observable stream.
 
+### Sumarizing Flattening operators:
+
+Let's now compare the **Flattening Operators**, which we've covered, side by side **the concatMap**, **switchMap**, and the **mergeMap** operators. We'll describe here how they differ. So we'll take into consideration how they handle concurrency and how safe and thus easy to use they are from the perspective of how easy can it be to potentially introduce _memory leaks_.
+
+We'll also have a look at the order in which things are happening. Let's start with describing how they handle concurrency, which, in other words, means what happens if the Flattening Operator is already having an active inner Subscription and the new value comes from the source.
+
+The **_concatMap_** operator will queue the incoming values, and as soon as the previous inner Subscription completes it will handle the next value in its buffer and create a new inner Subscription. Thanks to that, this operator is the safest as far as memory leaks are concerned, because if we would forget to make sure that the inner Observable completes the second value coming from the source would never be handled and we would notice this issue immediately.
+
+Also, it's 100% safe as far as the order in which everything gets done is concerned. _concatMap_ makes sure that all of the values emitted by the source Observable are handled one by one in the order they were emitted and also makes sure that the previous inner Subscription gets completed before starting a new one.
+
+So summarizing, this is the safest choice if you are not sure what to choose. It might not be the perfect fit in all situations, but it will definitely be the safest one. This operator has one drawback, one disadvantage. **_Due to all of this safety and handling all values one by one, it might be slow and inefficient in some scenarios_**. If that's your case, you can try the other ones.
+
+Let's now have a look at the **switchMap**. So, this operator cancels the previous inner Subscription if a new value comes from the source. So, it unsubscribes from it and creates a new Subscription for the new value immediately.
+
+So, if the inner Observable would be about making a request to the server, the _switchMap_ would unsubscribe from this Observable and would not care about the result and start a new Subscription, a new request for the new value coming from the source.
+
+From the memory leak perspective, if the inner Observable wouldn't complete, that's not a problem because each new value emitted by the source Observable cancels the previous inner Subscription. In other words, _switchMap_ unsubscribes from it so everything is cleaned up.
+
+**_switchMap has only one active inner Subscription at the same time, and it's always the one for the latest value emitted by the source_**. So if we receive something from the 'switchMap' operator, we are sure that it's the result of the latest value emitted by the source Observable.
+
+This operator is good for its responsiveness as it doesn't wait for the previous inner Subscription to finish before starting a new one for the latest value emitted by the source Observable. The order is predictable in most cases in a way that the values emitted by the **_switchMap operator are always a result of the most recent value emitted by the source_**.
+
+There are a few cases, though, related to, for example, storing something on the server where the request from those previous cancelled Subscriptions might actually reach the server after the requests made later due to Internet's unpredictable latency.
+
+**_If you just want to read something from the server, for example, fetch autocomplete search ideas, switchMap is a great choice_**.
+
+Lastly, let's cover the **_mergeMap_** operator. It can have multiple inner Subscriptions at the same time. It starts a new one as soon as a new value comes from the source Observable. So, it doesn't wait for the previous one to complete and it also doesn't cancel the previous Subscriptions.
+
+So we can say that those **_Subscriptions happen concurrently. And there can be any number of those concurrent inner Subscriptions_**, and because of that, this operator is the least safe from the memory leak perspective. So you need to make sure that the inner Observables complete at some point. If they wouldn't, **_there might be a lot of unused Subscriptions hanging in the memory_**. Also, as these Subscriptions are concurrent, every time any of them receive some value, this value will be flattened to the output, so we'll get this value immediately, however, we are not able to make any strong assumptions based on the order in which we receive the notifications.
+
+**_For the most part, all Flattening Operators work the same. It's when multiple values from the source Observable are to be handled concurrently when the differences show up. As you can see, each Flattening Operator has its own nuances and has its own purpose. If in doubt and you're not sure which one to choose, I recommend starting with concatMap, and if you find some drawbacks in its behavior, you can move on to the other ones_**.
+
+| concatMap                   | switchMap                           | mergeMap                    |
+| --------------------------- | ----------------------------------- | --------------------------- |
+| Queues/Buffers              | Cancels/Unsubscribe                 | Concurrent                  |
+| Memory leaks easy to notice | Memory leaks not dangerous          | Memory leaks hard to notice |
+| Values handled one by one   | Quick reaction to new source values | No definite order           |
+| Possible delayed reactions  | Order mostly safe                   | ----                        |
+
 #### _Think of RxJS as Lodash for events._
 
 ### The essential concepts in RxJS which solve async event management are:
