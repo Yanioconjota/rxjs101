@@ -51,6 +51,15 @@ _Just remember to open the inspector with_ `F12`
     - **concatMap**: The concatMap operator in RxJS is a flattening operator that maps each value emitted by the source Observable to an inner Observable, subscribes to them sequentially, and emits their values in the order of their arrival. It ensures that the order of emissions from the inner Observables is maintained.
     - **switchMap**: The switchMap operator in RxJS is a flattening operator that maps each value emitted by the source Observable to an inner Observable, subscribes to the most recent inner Observable, and emits its values. It cancels and unsubscribes from any previously subscribed inner Observables as soon as a new inner Observable is emitted.
     - **mergeMap**: The mergeMap operator in RxJS is a flattening operator that applies a projection function to each value emitted by the source Observable and maps it to an inner Observable. It then subscribes to all inner Observables concurrently and merges their emitted values into a single Observable stream.
+    - **withLatestFrom**: The withLatestFrom operator takes one or more Observables as arguments. It waits for the source Observable to emit a value, and then combines that value with the latest values from the other specified Observables. The resulting Observable will emit an array or tuple with the combined values. The withLatestFrom operator will only emit when the source Observable emits a value. It does not wait for all the other Observables to emit. It ensures that the latest values from all the specified Observables are available for combination whenever the source emits. (_example on exercise 29-behaviorSubject.ts_).
+  - **27 to 29** _Subjects and multicasting_
+    - **Subject**: A Subject is a type of Observable in RxJS that allows both subscribing to and emitting values. It acts as a bridge or proxy between the Observable and Observer, making it possible to multicast values to multiple subscribers. A Subject can be thought of as a combination of an Observable and an Observer, which means that it can emit values such as next, error and complete notifications, and multiple subscribers can receive those values.
+    - **BehaviorSubject**: A BehaviorSubject is a type of Subject in RxJS that represents a value that changes over time. It retains the latest value emitted and emits it immediately to new subscribers upon subscription. When you create a BehaviorSubject, you provide an initial value that will be emitted to subscribers. After that, whenever a new value is emitted, it replaces the previous value and is emitted to all subscribers. A BehaviorSubject has the following characteristics:
+      - _It stores the current value and emits it to new subscribers upon subscription_.
+      - _When a new value is emitted, it replaces the previous value and is emitted to all subscribers_.
+      - _It guarantees that subscribers receive the most recent value, even if they subscribe after the value has been emitted_.
+      - _Subscribers receive the initial value upon subscription_.
+    - **Multicasting**: Multicasting refers to the concept of sharing a single source Observable among multiple subscribers. It allows you to avoid duplicating the logic and resources used to produce the values, while ensuring that each subscriber receives the same sequence of values emitted by the source. In RxJS, multicasting can be achieved using subjects or higher-order Observable operators such as share, shareReplay, or publish.
 
 ### Sumarizing Flattening operators:
 
@@ -972,6 +981,12 @@ We can unsubscribe by executing the subscription object’s unsubscribe() method
 We’ve seen that observables produce data—this is why observables are sometimes referred to as **data source** or **source**. Moreover, observables can emit a sequence (or stream) of values—thus observables are also called **data streams** or **streams**.
 
 I hope this two-part article helped provide a better understanding of the observable type, paving the path to learn further topics relating to observables and reactive programming with RxJS (operators, subjects and schedulers).
+
+To further develop your front-end skills, I invite you to see my Medium articles:
+
+- [To unsubscribe, or not to unsubscribe, that is the question. — Subscriptions in RxJS](https://jaywoz.medium.com/rxjs-when-to-unsubscribe-c6f39b8b95b7)
+- [Ground control to major Tom — HTTP calls in RxJS](https://jaywoz.medium.com/ground-control-to-major-tom-http-calls-in-rxjs-1d47ba964b6c)
+- [Information is King — tap() — how to console.log in RxJS](https://jaywoz.medium.com/information-is-king-tap-how-to-console-log-in-rxjs-7fc09db0ad5a)
 
 #### Resources
 
